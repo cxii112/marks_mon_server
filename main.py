@@ -1,4 +1,5 @@
 from aiohttp import web
+import aiohttp_cors
 from routes import routes
 from settings import APPPORT
 
@@ -11,4 +12,8 @@ if __name__ == '__main__':
             handler=route.handler,
             name=route.name
         )
+    cors = aiohttp_cors.CorsConfig(app, defaults={
+        '*': aiohttp_cors.ResourceOptions()
+    })
+
     web.run_app(app, port=APPPORT)
