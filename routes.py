@@ -2,13 +2,14 @@ import handlers
 from utils import Route
 from weeks import routes as weeks_routes
 
-routes = []
-# routes = [
-#     Route(
-#         method='GET',
-#         path='/',
-#         handler=handlers.root,
-#         name='root'),
+# routes = []
+routes = [
+    Route(
+        method='GET',
+        path='/',
+        handler=handlers.root,
+        name='root')
+]
 #     Route(
 #         method='GET',
 #         path='/bla-bla-bla',
