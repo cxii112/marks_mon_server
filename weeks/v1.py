@@ -24,7 +24,7 @@ async def connect() -> asyncpg.Connection:
 async def get(request: web.Request):
     res = {
         'msg': 'Something go wrong',
-        'data': [],
+        'payload': [],
     }
     status = 500
     log.info(f'{request.method} {request.path}')
@@ -46,7 +46,7 @@ async def get(request: web.Request):
             temp_row = dict(row)
             temp_row['id'] = str(temp_row['id'])
             temp_row['date'] = temp_row['date'].isoformat()
-            res['data'].append(temp_row)
+            res['payload'].append(temp_row)
 
     except asyncpg.exceptions.ConnectionFailureError:
         res['msg'] = 'Connection Failure Error'
