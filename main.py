@@ -14,7 +14,11 @@ if __name__ == '__main__':
     })
 
     for route in routes:
-        resource = cors.add(app.router.add_resource(route.path))
-        cors.add(resource.add_route(route.method, route.handler))
+        app.router.add_route(method=route.method,
+                             path=route.path,
+                             name=route.name,
+                             handler=route.handler)
+    for route in list(app.router.routes()):
+        cors.add(route)
 
     web.run_app(app, port=APPPORT)

@@ -6,17 +6,19 @@ from settings import PGPORT
 from settings import PGUSER
 from settings import PGPASSWORD
 from settings import PGDATABASE
+from settings import DB_URL
 from settings import log
 from .conf import table_name
 from datetime import date
 
 
 async def connect() -> asyncpg.Connection:
-    return await asyncpg.connect(host=PGHOST,
-                                 port=PGPORT,
-                                 user=PGUSER,
-                                 password=PGPASSWORD,
-                                 database=PGDATABASE)
+    # return await asyncpg.connect(host=PGHOST,
+    #                              port=PGPORT,
+    #                              user=PGUSER,
+    #                              password=PGPASSWORD,
+    #                              database=PGDATABASE)
+    return await asyncpg.connect(DB_URL)
 
 
 async def get(request: web.Request):
@@ -27,7 +29,8 @@ async def get(request: web.Request):
     status = 500
     log.info(f'{request.method} {request.path}')
     try:
-        log.info(f'Try connect {PGHOST}:{PGPORT}/{PGDATABASE} as {PGUSER}')
+        # log.info(f'Try connect {PGHOST}:{PGPORT}/{PGDATABASE} as {PGUSER}')
+        log.info(f'Try connect to {DB_URL}')
         connection: asyncpg.Connection = await connect()
         res['msg'] = 'Success'
         status = 200
