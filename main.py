@@ -1,6 +1,7 @@
 from aiohttp import web
 from routes import routes
 from settings import APPPORT
+from settings import APPHOST
 
 if __name__ == '__main__':
     app = web.Application()
@@ -11,4 +12,6 @@ if __name__ == '__main__':
             handler=route.handler,
             name=route.name
         )
-    web.run_app(app, port=APPPORT)
+    web.run_app(app,
+                port=APPPORT,
+                host=APPHOST)
