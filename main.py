@@ -5,15 +5,16 @@ from settings import APPPORT
 
 if __name__ == '__main__':
     app = web.Application()
-    for route in routes:
-        app.router.add_route(
-            method=route.method,
-            path=route.path,
-            handler=route.handler,
-            name=route.name
+    cors = aiohttp_cors.setup(app, defaults={
+        "*": aiohttp_cors.ResourceOptions(
+            allow_credentials=True,
+            expose_headers="*",
+            allow_headers="*",
         )
-    cors = aiohttp_cors.CorsConfig(app, defaults={
-        '*': aiohttp_cors.ResourceOptions()
     })
+
+    for route in routes:
+        resource = cors.add(app.router.add_resource(route.path))
+        cors.add(resource.add_route(route.method, route.handler))
 
     web.run_app(app, port=APPPORT)
