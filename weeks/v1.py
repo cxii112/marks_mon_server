@@ -1,23 +1,17 @@
-from aiohttp import web
 import json
+from datetime import date
+
 import asyncpg
-from settings import PGHOST
-from settings import PGPORT
-from settings import PGUSER
-from settings import PGPASSWORD
-from settings import PGDATABASE
+from aiohttp import web
+
 from settings import DB_URL
+from settings import KEEPDAYS
 from settings import log
 from .conf import table_name
-from datetime import date
 
 
 async def connect() -> asyncpg.Connection:
-    # return await asyncpg.connect(host=PGHOST,
-    #                              port=PGPORT,
-    #                              user=PGUSER,
-    #                              password=PGPASSWORD,
-    #                              database=PGDATABASE)
+    log.info(f'Try connect to {DB_URL}')
     return await asyncpg.connect(DB_URL)
 
 
@@ -29,8 +23,6 @@ async def get(request: web.Request):
     status = 500
     log.info(f'{request.method} {request.path}')
     try:
-        # log.info(f'Try connect {PGHOST}:{PGPORT}/{PGDATABASE} as {PGUSER}')
-        log.info(f'Try connect to {DB_URL}')
         connection: asyncpg.Connection = await connect()
         res['msg'] = 'Success'
         status = 200
@@ -38,7 +30,7 @@ async def get(request: web.Request):
         i = 0
         for row in data:
             temp_row = dict(row)
-            if abs(date.today() - temp_row['date']).days > 7 * 60:
+            if abs(date.today() - temp_row['date']).days > KEEPDAYS:
                 await delete(connection, temp_row['id'])
                 data.pop(i)
             i += 1
@@ -72,7 +64,6 @@ async def create(request: web.Request):
     log.info(f'{request.method} {request.path}')
     data = await request.json()
     try:
-        log.info(f'Try connect {PGHOST}:{PGPORT}/{PGDATABASE} as {PGUSER}')
         connection: asyncpg.Connection = await connect()
         res['msg'] = 'Success'
         status = 200
@@ -96,6 +87,7 @@ async def create(request: web.Request):
 async def delete(conn: asyncpg.Connection, week_id: str):
     async with conn.transaction():
         await conn.execute(f"""DELETE FROM {table_name} WHERE id = '{week_id}';""")
+
 
 def temp(request: web.Request):
     body = {
