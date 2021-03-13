@@ -39,6 +39,7 @@ async def get(request: web.Request):
             temp_row['id'] = str(temp_row['id'])
             temp_row['date'] = temp_row['date'].isoformat()
             res['payload'].append(temp_row)
+        await connection.close()
 
     except asyncpg.exceptions.ConnectionFailureError:
         res['msg'] = 'Connection Failure Error'
@@ -74,6 +75,7 @@ async def create(request: web.Request):
             res['data'] = data
             await connection.execute(f"""INSERT INTO {table_name} (minutes, points, date) VALUES 
             ('{data['minutes']}', '{data['points']}', '{data['date']}');""")
+        await connection.close()
     except asyncpg.exceptions.ConnectionFailureError:
         res['msg'] = 'Connection Failure Error'
         status = 500
